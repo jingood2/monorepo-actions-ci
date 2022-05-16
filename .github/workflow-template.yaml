@@ -1,4 +1,4 @@
-ame: "{{ROUTE}}"
+name: "{{ROUTE}}"
 
 on:
   push:
