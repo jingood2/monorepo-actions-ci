@@ -1,4 +1,4 @@
-ame: "auth"
+name: "auth"
 
 on:
   push:

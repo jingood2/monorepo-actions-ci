@@ -1,4 +1,4 @@
-ame: "infra"
+name: "infra"
 
 on:
   push:

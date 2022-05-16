@@ -1,4 +1,4 @@
-ame: "backend"
+name: "backend"
 
 on:
   push:
