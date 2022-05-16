@@ -1,0 +1,18 @@
+ame: "backend"
+
+on:
+  push:
+    paths:
+      - "projects/backend/**"
+      - ".github/workflows/backend.yaml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Run tests
+        run: |-
+          cd projects/backend
+          go test ./...
