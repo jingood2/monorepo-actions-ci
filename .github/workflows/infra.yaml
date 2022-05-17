@@ -32,4 +32,5 @@ jobs:
       
       - name: cdk diff
         run: |-
-          npm diff
+          cd projects/infra
+          npm run diff
