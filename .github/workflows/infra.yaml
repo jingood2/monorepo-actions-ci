@@ -9,30 +9,25 @@ on:
       - ".github/workflows/infra.yaml"
 
 jobs:
-  build-deploy:
+  aws_cdk:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-      - uses: aws-actions/setup-sam@v1
-      - uses: aws-actions/configure-aws-credentials@master
+      - name: assume role
+        uses: aws-actions/configure-aws-credentials@master
         with:
           role-to-assume: arn:aws:iam::037729278610:role/github-deploy-role
           role-session-name: mysession
-          #aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          #aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
-      # sam build 
-      - run: |- 
-          cd projects/infra
-          sam build --use-container
+      - name: cdk diff
+        uses: youyo/aws-cdk-github-actions@v2
+        with:
+          cdk_subcommand: 'diff'
+          cdk_version: '2.24.1'
+          actions_comment: true
 
-# Run Unit tests- Specify unit tests here 
-
-# sam deploy
-      - run: |-
-          cd projects/infra
-          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name infra --s3-bucket jingood2-s3-dev-content --capabilities CAPABILITY_IAM --region ap-northeast-2
+      - name: cdk synth
+        uses: youyo/aws-cdk-github-actions@v2
+        with:
+          cdk_subcommand: 'synth'
+          cdk_version: '2.24.1'
+          working_dir: 'projects/infra'
