@@ -30,4 +30,5 @@ jobs:
       - name: cdk diff
         uses: arnaskro/aws-cdk-v2-github-actions@v2.2.1
         with:
-          cdk_subcommand: 'diff'
+          working_dir: projects/infra
+          cdk_subcommand: npx projen build
