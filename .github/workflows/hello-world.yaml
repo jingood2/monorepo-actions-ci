@@ -27,7 +27,7 @@ jobs:
       # sam build 
       - run: | 
           - cd projects/hello-world
-          - sam build --use-container
+          - sam build
 
 # Run Unit tests- Specify unit tests here 
 
