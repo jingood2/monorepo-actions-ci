@@ -26,7 +26,7 @@ jobs:
           role-to-assume: arn:aws:iam::037729278610:role/github-deploy-role
           role-session-name: mysession
           aws-region: ap-northeast-2
-      - name: Deploy
-        uses: udondan/cdk-nodejs@v0.4.0
+      - name: cdk diff
+        uses: arnaskro/aws-cdk-v2-github-actions@v2.2.1
         with:
-          SUBDIR: projects/infra
+          cdk_subcommand: 'diff'
