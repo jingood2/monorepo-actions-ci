@@ -28,6 +28,7 @@ jobs:
           cdk_subcommand: 'diff'
           cdk_version: '2.24.1'
           actions_comment: true
+          working_dir: 'projects/infra'
 
       - name: cdk synth
         uses: youyo/aws-cdk-github-actions@v2
