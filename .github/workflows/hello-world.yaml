@@ -10,9 +10,6 @@ on:
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -33,5 +30,5 @@ jobs:
 
 # sam deploy
       - run: |-
-          cd projects/hello-world  
-          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name $hello-world --s3-bucket jingood2-s3-dev-content --capabilities CAPABILITY_IAM --region ap-northeast-2
+          cd projects/hello-world
+          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name hello-world --s3-bucket jingood2-s3-dev-content --capabilities CAPABILITY_IAM --region ap-northeast-2

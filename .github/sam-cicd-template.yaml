@@ -23,12 +23,12 @@ jobs:
           aws-region: ap-northeast-2
       # sam build 
       - run: |- 
-          cd projects/${{ROUTE}}
+          cd projects/{{ROUTE}}
           sam build --use-container
 
 # Run Unit tests- Specify unit tests here 
 
 # sam deploy
       - run: |-
-          cd projects/${{ROUTE}}
-          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name ${{ROUTE}} --s3-bucket jingood2-s3-dev-content --capabilities CAPABILITY_IAM --region ap-northeast-2
+          cd projects/{{ROUTE}}
+          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name {{ROUTE}} --s3-bucket jingood2-s3-dev-content --capabilities CAPABILITY_IAM --region ap-northeast-2

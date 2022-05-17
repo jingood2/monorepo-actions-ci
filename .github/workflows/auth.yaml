@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - "projects/auth/**"
-      - ".github/workflows/auth-cicd.yaml"
+      - ".github/workflows/auth.yaml"
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
@@ -14,7 +14,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
       - uses: aws-actions/setup-sam@v1
-      - uses: aws-actions/configure-aws-credentials@v1
+      - uses: aws-actions/configure-aws-credentials@master
         with:
           role-to-assume: arn:aws:iam::037729278610:role/github-deploy-role
           role-session-name: mysession
@@ -22,9 +22,13 @@ jobs:
           #aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
       # sam build 
-      - run: sam build --use-container
+      - run: |- 
+          cd projects/auth
+          sam build --use-container
 
 # Run Unit tests- Specify unit tests here 
 
 # sam deploy
-      - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name $auth --s3-bucket jingood2-s3-dev-content --capabilities CAPABILITY_IAM --region ##region## 
+      - run: |-
+          cd projects/auth
+          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name auth --s3-bucket jingood2-s3-dev-content --capabilities CAPABILITY_IAM --region ap-northeast-2
