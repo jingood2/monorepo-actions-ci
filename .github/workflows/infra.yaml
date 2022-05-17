@@ -9,7 +9,7 @@ on:
       - ".github/workflows/infra.yaml"
 
 jobs:
-  aws_cdk:
+  cdk_build:
     runs-on: ubuntu-latest
      # These permissions are needed to interact with GitHub's OIDC Token endpoint
     permissions:
@@ -29,8 +29,10 @@ jobs:
           role-to-assume: arn:aws:iam::037729278610:role/github-deploy-role
           role-session-name: mysession
           aws-region: ap-northeast-2
-      
       - name: cdk diff
         run: |-
           cd projects/infra
           npm run diff
+      - name: cdk build 
+        run: |-
+          npm run build
