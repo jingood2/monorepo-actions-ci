@@ -23,21 +23,23 @@ jobs:
       - uses: bahmutov/npm-install@v1
         with:
           working-directory: projects/infra
+
       - name: assume role
         uses: aws-actions/configure-aws-credentials@master
         with:
           role-to-assume: arn:aws:iam::037729278610:role/github-deploy-role
           role-session-name: mysession
           aws-region: ap-northeast-2
+
       - name: cdk diff
-        run: |-
-          cd projects/infra
-          npm run diff
+        run: npm run diff
+        working-directory: projects/infra
+
       - name: cdk build 
-        run: |-
-          cd projects/infra
-          npm run build
+        run: npm run build 
+        working-directory: projects/infra
+          
       - name: cdk deploy
-        run: |-
-          cd projects/infra
-          npm run deploy
+        run: npm run deploy
+        working-directory: projects/infra
+         
