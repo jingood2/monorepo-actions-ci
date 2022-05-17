@@ -1,18 +1,29 @@
-name: "auth"
+name: auth
 
 on:
   push:
+    branches:
+      - main
     paths:
       - "projects/auth/**"
-      - ".github/workflows/auth.yaml"
-
+      - ".github/workflows/auth-cicd.yaml"
 jobs:
-  test:
+  build-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - uses: aws-actions/setup-sam@v1
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::037729278610:role/github-deploy-role
+          #aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          #aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+      # sam build 
+      - run: sam build --use-container
 
-      - name: Run tests
-        run: |-
-          cd projects/auth
-          go test ./...
+# Run Unit tests- Specify unit tests here 
+
+# sam deploy
+      - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name $auth --s3-bucket jingood2-s3-dev-content --capabilities CAPABILITY_IAM --region ##region## 

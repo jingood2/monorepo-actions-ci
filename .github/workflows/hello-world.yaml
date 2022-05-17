@@ -1,12 +1,12 @@
-name: backend
+name: hello-world
 
 on:
   push:
     branches:
       - main
     paths:
-      - "projects/backend/**"
-      - ".github/workflows/backend-cicd.yaml"
+      - "projects/hello-world/**"
+      - ".github/workflows/hello-world-cicd.yaml"
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
@@ -26,4 +26,4 @@ jobs:
 # Run Unit tests- Specify unit tests here 
 
 # sam deploy
-      - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name $backend --s3-bucket jingood2-s3-dev-content --capabilities CAPABILITY_IAM --region ##region## 
+      - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name $hello-world --s3-bucket jingood2-s3-dev-content --capabilities CAPABILITY_IAM --region ##region## 
