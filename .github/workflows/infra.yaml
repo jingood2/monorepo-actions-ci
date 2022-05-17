@@ -30,4 +30,4 @@ jobs:
         uses: arnaskro/aws-cdk-v2-github-actions@v2.2.1
         with:
           working_dir: projects/infra
-          cdk_subcommand: npx projen build
+          cdk_subcommand: 'build'
