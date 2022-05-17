@@ -15,15 +15,21 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    env:
+      CI: "true"
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
           fetch-depth: 1
-      - uses: bahmutov/npm-install@v1
-        with:
-          working-directory: projects/infra
-
+      - name: install npm
+        run: sudo apt update -y && sudo apt install nodejs npm -y
+        working-directory: projects/infra
+      - name: Install dependencies
+        run: npm ci
+      #- uses: bahmutov/npm-install@v1
+      #  with:
+      #    working-directory: projects/infra
       - name: assume role
         uses: aws-actions/configure-aws-credentials@master
         with:
