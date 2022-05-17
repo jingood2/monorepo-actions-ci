@@ -37,3 +37,7 @@ jobs:
         run: |-
           cd projects/infra
           npm run build
+      - name: cdk deploy
+        run: |-
+          cd projects/infra
+          npm run deploy
