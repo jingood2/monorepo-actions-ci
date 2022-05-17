@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - "projects/{{ROUTE}}/**"
-      - ".github/workflows/{{ROUTE}}-cicd.yaml"
+      - ".github/workflows/{{ROUTE}}.yaml"
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
