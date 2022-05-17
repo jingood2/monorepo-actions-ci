@@ -19,6 +19,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
+          path: projects/hello-world
           fetch-depth: 1
       - name: assume role
         uses: aws-actions/configure-aws-credentials@master
