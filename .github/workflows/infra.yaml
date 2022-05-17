@@ -7,12 +7,13 @@ on:
     paths:
       - "projects/infra/**"
       - ".github/workflows/infra.yaml"
+
 jobs:
-  permissions:
-    id-token: write
-    contents: read
   build-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
