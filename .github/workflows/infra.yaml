@@ -20,14 +20,15 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 1
+      - uses: ng-easy/npm-install@v2
       - name: assume role
         uses: aws-actions/configure-aws-credentials@master
         with:
           role-to-assume: arn:aws:iam::037729278610:role/github-deploy-role
           role-session-name: mysession
           aws-region: ap-northeast-2
+      
       - name: cdk diff
-        uses: arnaskro/aws-cdk-v2-github-actions@v2.2.1
-        with:
-          working_dir: projects/infra
-          cdk_subcommand: 'build'
+        run: |-
+          cd projects/infra
+          npm diff
