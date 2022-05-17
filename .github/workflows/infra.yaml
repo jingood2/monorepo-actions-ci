@@ -27,7 +27,7 @@ jobs:
         working-directory: projects/infra
 
       - name: Install dependencies
-        run: npm ci
+        run: yarn install --check-files
         working-directory: projects/infra
 
       - name: assume role
