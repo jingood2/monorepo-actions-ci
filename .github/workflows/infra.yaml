@@ -16,23 +16,17 @@ jobs:
       id-token: write
       contents: read
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
       - name: assume role
         uses: aws-actions/configure-aws-credentials@master
         with:
           role-to-assume: arn:aws:iam::037729278610:role/github-deploy-role
           role-session-name: mysession
           aws-region: ap-northeast-2
-      - name: cdk diff
-        uses: youyo/aws-cdk-github-actions@v2
+      - name: Deploy
+        uses: udondan/cdk-nodejs@v0.4.0
         with:
-          cdk_subcommand: 'diff'
-          cdk_version: '2.24.1'
-          actions_comment: true
-          working_dir: 'projects/infra'
-
-      - name: cdk synth
-        uses: youyo/aws-cdk-github-actions@v2
-        with:
-          cdk_subcommand: 'synth'
-          cdk_version: '2.24.1'
-          working_dir: 'projects/infra'
+          SUBDIR: projects/infra
