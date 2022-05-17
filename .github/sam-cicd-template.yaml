@@ -8,6 +8,9 @@ on:
       - "projects/{{ROUTE}}/**"
       - ".github/workflows/{{ROUTE}}.yaml"
 jobs:
+  permissions:
+    id-token: write
+    contents: read
   build-deploy:
     runs-on: ubuntu-latest
     steps:

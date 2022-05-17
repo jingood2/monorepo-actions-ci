@@ -8,6 +8,9 @@ on:
       - "projects/infra/**"
       - ".github/workflows/infra.yaml"
 jobs:
+  permissions:
+    id-token: write
+    contents: read
   build-deploy:
     runs-on: ubuntu-latest
     steps:
