@@ -17,7 +17,7 @@ const devEnv = {
 
 const app = new App();
 
-new MyStack(app, 'infra-dev', { env: devEnv });
+new MyStack(app, 'infra-prod', { env: devEnv });
 // new MyStack(app, 'infra-prod', { env: prodEnv });
 
 app.synth();
