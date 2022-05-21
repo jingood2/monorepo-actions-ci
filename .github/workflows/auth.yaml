@@ -53,7 +53,7 @@ jobs:
         uses: github/super-linter@v4
         env:
           VALIDATE_ALL_CODEBASE: false
-          DEFAULT_BRANCH: echo ${GITHUB_REF##*/}
+          DEFAULT_BRANCH:  ${FEATURE_BRANCH_NAME##*/} 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   delete-feature:
