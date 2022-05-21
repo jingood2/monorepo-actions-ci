@@ -6,7 +6,7 @@ on:
       - 'main'
       - 'feat**'
     paths:
-      - "projects/auth.yaml"
+      - "projects/auth/**"
       - "./github/workflows/auth.yaml"
   delete:
     branches:

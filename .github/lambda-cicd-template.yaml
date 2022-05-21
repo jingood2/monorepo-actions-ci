@@ -6,7 +6,7 @@ on:
       - 'main'
       - 'feat**'
     paths:
-      - "projects/{{ROUTE}}.yaml"
+      - "projects/{{ROUTE}}/**"
       - "./github/workflows/{{ROUTE}}.yaml"
   delete:
     branches:
