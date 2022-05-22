@@ -71,7 +71,6 @@ jobs:
           role-to-assume: ${{ env.TESTING_PIPELINE_EXECUTION_ROLE }}
           role-session-name: testing-packaging
           role-duration-seconds: 3600
-          role-skip-session-tagging: true
 
       - name: Delete feature branch stack
         env:
@@ -104,7 +103,6 @@ jobs:
           role-to-assume: ${{ env.TESTING_PIPELINE_EXECUTION_ROLE }}
           role-session-name: feature-deployment
           role-duration-seconds: 3600
-          role-skip-session-tagging: true
 
       - name: Deploy to feature stack in the testing account
         shell: bash
