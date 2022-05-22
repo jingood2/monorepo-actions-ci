@@ -20,7 +20,7 @@ jobs:
       - uses: aws-actions/setup-sam@v1
       - uses: aws-actions/configure-aws-credentials@master
         with:
-          role-to-assume: arn:aws:iam::037729278610:role/github-deploy-role
+          role-to-assume: arn:aws:iam::037729278610:role/github-deploy-v2-role
           role-session-name: mysession
           aws-region: ap-northeast-2
       # sam build 
