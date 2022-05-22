@@ -217,7 +217,6 @@ jobs:
 
       - name: Deploy to testing account
         run: |
-          cd projects/sam-pipeline
           sam deploy --stack-name ${TESTING_STACK_NAME} \
             --template packaged-testing.yaml \
             --capabilities CAPABILITY_IAM \
@@ -266,7 +265,6 @@ jobs:
 
       - name: Deploy to production account
         run: |
-          cd projects/$sam-pipeline
           sam deploy --stack-name ${PROD_STACK_NAME} \
             --template packaged-prod.yaml \
             --capabilities CAPABILITY_IAM \
