@@ -202,7 +202,7 @@ jobs:
       - uses: aws-actions/setup-sam@v1
       - uses: actions/download-artifact@v2
         with:
-          name: projects/authpackaged-testing.yaml
+          name: projects/auth/packaged-testing.yaml
 
       - name: Assume the testing pipeline user role
         uses: aws-actions/configure-aws-credentials@master
