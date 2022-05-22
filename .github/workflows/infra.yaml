@@ -89,6 +89,9 @@ jobs:
     if: startsWith(github.ref, 'refs/heads/feat')
     needs: [test]
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -122,6 +125,9 @@ jobs:
     if: github.ref == 'refs/heads/main'
     needs: [test]
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v2
         with:
@@ -186,6 +192,9 @@ jobs:
   deploy-testing:
     if: github.ref == 'refs/heads/main'
     needs: [build-and-package]
+    permissions:
+      id-token: write
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -230,6 +239,9 @@ jobs:
     if: github.ref == 'refs/heads/main'
     needs: [integration-test]
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     # Configure GitHub Action Environment to have a manual approval step before deployment to production
     # https://docs.github.com/en/actions/reference/environments
     # environment: <configured-environment>
