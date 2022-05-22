@@ -18,7 +18,7 @@ env:
   PIPELINE_USER_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   SAM_TEMPLATE: template.yaml
   TESTING_STACK_NAME: sam-pipeline-dev
-  TESTING_PIPELINE_EXECUTION_ROLE: arn:aws:iam::037729278610:role/github-deploy-v2-role
+  TESTING_PIPELINE_EXECUTION_ROLE: arn:aws:iam::037729278610:role/github-monorepo-actions-ci-role
   TESTING_CLOUDFORMATION_EXECUTION_ROLE: arn:aws:iam::037729278610:role/aws-sam-cli-managed-dev-p-CloudFormationExecutionR-B3VPYQ0FH62F
   TESTING_ARTIFACTS_BUCKET: jingood2-s3-dev-content
   # If there are functions with "Image" PackageType in your template,
@@ -27,7 +27,7 @@ env:
   # TESTING_IMAGE_REPOSITORY = '0123456789.dkr.ecr.region.amazonaws.com/repository-name'
   TESTING_REGION: ap-northeast-2
   PROD_STACK_NAME: sam-pipeline-prod
-  PROD_PIPELINE_EXECUTION_ROLE: arn:aws:iam::037729278610:role/aws-sam-cli-managed-dev-pipe-PipelineExecutionRole-E5TTC73FWLD7
+  PROD_PIPELINE_EXECUTION_ROLE: arn:aws:iam::037729278610:role/github-monorepo-actions-ci-role
   PROD_CLOUDFORMATION_EXECUTION_ROLE: arn:aws:iam::037729278610:role/aws-sam-cli-managed-dev-p-CloudFormationExecutionR-B3VPYQ0FH62F
   PROD_ARTIFACTS_BUCKET: jingood2-s3-dev-content
   # If there are functions with "Image" PackageType in your template,
