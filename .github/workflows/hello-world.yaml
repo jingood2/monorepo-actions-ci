@@ -102,10 +102,9 @@ jobs:
       - name: Assume the testing pipeline user role
         uses: aws-actions/configure-aws-credentials@master
         with:
-          aws-region: ${{ env.TESTING_REGION }}
-          role-to-assume: ${{ env.TESTING_PIPELINE_EXECUTION_ROLE }}
+          role-to-assume: arn:aws:iam::037729278610:role/github-deploy-v2-role
           role-session-name: feature-deployment
-          role-duration-seconds: 3600
+          aws-region: ap-northeast-2
 
       - name: Deploy to feature stack in the testing account
         shell: bash
