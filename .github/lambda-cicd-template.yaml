@@ -1,4 +1,4 @@
-name: "hello-world"
+name: "{{ROUTE}}"
 
 on:
   push:
@@ -6,8 +6,8 @@ on:
       - 'main'
       - 'feat**'
     paths:
-      - "projects/hello-world/**"
-      - "./github/workflows/hello-world.yaml"
+      - "projects/{{ROUTE}}/**"
+      - "./github/workflows/{{ROUTE}}.yaml"
   delete:
     branches:
       - 'feat**'
@@ -71,12 +71,13 @@ jobs:
           role-to-assume: ${{ env.TESTING_PIPELINE_EXECUTION_ROLE }}
           role-session-name: testing-packaging
           role-duration-seconds: 3600
+          role-skip-session-tagging: true
 
       - name: Delete feature branch stack
         env:
           FEATURE_BRANCH_NAME: ${{ github.event.ref }}
         run: |
-          cd projects/hello-world
+          cd projects/{{ROUTE}}
           sam delete \
             --stack-name $(echo ${FEATURE_BRANCH_NAME##*/} | tr -cd '[a-zA-Z0-9-]') \
             --region ${TESTING_REGION} \
@@ -88,29 +89,28 @@ jobs:
     if: startsWith(github.ref, 'refs/heads/feat')
     needs: [test]
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
       - uses: aws-actions/setup-sam@v1
       - run: |-
-          cd projects/hello-world
+          cd projects/{{ROUTE}}
           sam build --template ${SAM_TEMPLATE} --use-container
 
       - name: Assume the testing pipeline user role
         uses: aws-actions/configure-aws-credentials@master
         with:
-          role-to-assume: arn:aws:iam::037729278610:role/github-deploy-v2-role
+          aws-region: ${{ env.TESTING_REGION }}
+          role-to-assume: ${{ env.TESTING_PIPELINE_EXECUTION_ROLE }}
           role-session-name: feature-deployment
-          aws-region: ap-northeast-2
+          role-duration-seconds: 3600
+          role-skip-session-tagging: true
 
       - name: Deploy to feature stack in the testing account
         shell: bash
         run: |-
           echo running on brach ${GITHUB_REF##*/}
-          cd projects/hello-world
+          cd projects/{{ROUTE}}
           sam deploy --stack-name $(echo ${GITHUB_REF##*/} | tr -cd '[a-zA-Z0-9-]') \
             --capabilities CAPABILITY_IAM \
             --region ${TESTING_REGION} \
@@ -132,7 +132,7 @@ jobs:
 
       - name: Build resources
         run: |-
-          cd projects/hello-world
+          cd projects/{{ROUTE}}
           sam build --template ${SAM_TEMPLATE} --use-container
 
       - name: Assume the testing pipeline user role
@@ -148,7 +148,7 @@ jobs:
 
       - name: Upload artifacts to testing artifact buckets
         run: |
-          cd projects/hello-world
+          cd projects/{{ROUTE}}
           sam package \
             --s3-bucket ${TESTING_ARTIFACTS_BUCKET} \
             --region ${TESTING_REGION} \
@@ -157,7 +157,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: packaged-testing.yaml
-          path: projects/hello-world/packaged-testing.yaml
+          path: projects/{{ROUTE}}/packaged-testing.yaml
 
       - name: Assume the prod pipeline user role
         uses: aws-actions/configure-aws-credentials@master
@@ -172,7 +172,7 @@ jobs:
 
       - name: Upload artifacts to production artifact buckets
         run: |
-          cd projects/hello-world
+          cd projects/{{ROUTE}}
           sam package \
             --s3-bucket ${PROD_ARTIFACTS_BUCKET} \
             --region ${PROD_REGION} \
@@ -181,7 +181,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: packaged-prod.yaml
-          path: projects/hello-world/packaged-prod.yaml
+          path: projects/{{ROUTE}}/packaged-prod.yaml
 
   deploy-testing:
     if: github.ref == 'refs/heads/main'
@@ -193,7 +193,7 @@ jobs:
       - uses: aws-actions/setup-sam@v1
       - uses: actions/download-artifact@v2
         with:
-          name: projects/hello-worldpackaged-testing.yaml
+          name: projects/{{ROUTE}}packaged-testing.yaml
 
       - name: Assume the testing pipeline user role
         uses: aws-actions/configure-aws-credentials@master
@@ -208,7 +208,7 @@ jobs:
 
       - name: Deploy to testing account
         run: |
-          cd projects/hello-world
+          cd projects/{{ROUTE}}
           sam deploy --stack-name ${TESTING_STACK_NAME} \
             --template packaged-testing.yaml \
             --capabilities CAPABILITY_IAM \
@@ -254,7 +254,7 @@ jobs:
 
       - name: Deploy to production account
         run: |
-          cd projects/$hello-world
+          cd projects/${{ROUTE}}
           sam deploy --stack-name ${PROD_STACK_NAME} \
             --template packaged-prod.yaml \
             --capabilities CAPABILITY_IAM \
