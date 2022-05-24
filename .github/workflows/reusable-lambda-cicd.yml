@@ -99,16 +99,12 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
       - name: Set the working directory
-        run: |
-          if [ -z "${{inputs.app_name}}" ]
-          then
-            echo "working_dir=projects/hello-world" >> $GITHUB_ENV
-          else
-            echo "working_dir=projects/${{inputs.app_name}}" >> $GITHUB_ENV
-          fi
+        run: |-
+          WORKING_DIR="${{inputs.app_name}}"
+          echo "WORKING_DIR=projects/${WORKING_DIR}" >> $GITHUB_ENV
       - uses: aws-actions/setup-sam@v1
       - run: |-
-          cd ${env.working_dir}
+          cd ${env.WORKING_DIR}
           sam build --template ${SAM_TEMPLATE} --use-container
 
       - name: Assume the testing pipeline user role
