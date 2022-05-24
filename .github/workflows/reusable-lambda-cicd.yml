@@ -104,7 +104,7 @@ jobs:
           echo "WORKING_DIR=projects/${WORKING_DIR}" >> $GITHUB_ENV
       - uses: aws-actions/setup-sam@v1
       - run: |-
-          cd ${env.WORKING_DIR}
+          cd ${WORKING_DIR}
           sam build --template ${SAM_TEMPLATE} --use-container
 
       - name: Assume the testing pipeline user role
