@@ -7,7 +7,7 @@ on:
       - 'feat**'
     paths:
       - "projects/hello-world/**"
-      - "./github/workflows/hello-world.yaml"
+      - "./github/workflows/037729278610/hello-world.yaml"
   delete:
     branches:
       - 'feat**'

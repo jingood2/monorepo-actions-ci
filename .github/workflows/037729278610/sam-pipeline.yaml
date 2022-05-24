@@ -7,7 +7,7 @@ on:
       - 'feat**'
     paths:
       - "projects/sam-pipeline/**"
-      - "./github/workflows/sam-pipeline.yaml"
+      - "./github/workflows/037729278610/sam-pipeline.yaml"
   delete:
     branches:
       - 'feat**'
