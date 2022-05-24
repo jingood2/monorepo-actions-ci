@@ -123,9 +123,9 @@ jobs:
           sam deploy --stack-name $(echo ${GITHUB_REF##*/} | tr -cd '[a-zA-Z0-9-]') \
             --capabilities CAPABILITY_IAM \
             --region $(echo ${{inputs.aws_region}}) \
-            --s3-bucket $(echo ${inputs.artifact_bucket}) \
+            --s3-bucket $(echo ${{inputs.artifact_bucket}}) \
             --no-fail-on-empty-changeset \
-            --role-arn $(echo ${env.TESTING_CLOUDFORMATION_EXECUTION_ROLE})
+            --role-arn $(echo ${{env.TESTING_CLOUDFORMATION_EXECUTION_ROLE}})
 
   build-and-package:
     if: github.ref == 'refs/heads/main'

@@ -14,10 +14,6 @@ on:
 
 jobs:
   build-and-deploy-feature:
-    # this stage is triggered only for feature branches (feature*),
-    # which will build the stack and deploy to a stack named with branch name.
-    #if: startsWith(github.ref, 'refs/heads/feat')
-    #needs: [test]
     uses: ./.github/workflows/reusable-lambda-cicd.yml
     permissions:
       id-token: write
