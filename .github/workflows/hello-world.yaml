@@ -14,7 +14,8 @@ on:
 
 jobs:
   account_deploy:
-    uses: ./.github/reusable-lambda-cicd.yml
+    # reusable workflows MUST be in .github/workflows
+    uses: ./.github/workflows/reusable-lambda-cicd.yml
     permissions:
       id-token: write
       contents: read
