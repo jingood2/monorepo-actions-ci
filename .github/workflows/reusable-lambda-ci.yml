@@ -29,7 +29,8 @@ on:
 env:
   CI: "true"
   SAM_TEMPLATE: template.yaml
-  TESTING_STACK_NAME: ${ inputs.app_name }-dev
+  TESTING_STACK_NAME: ${{inputs.app_name }}-dev
+  PROD_STACK_NAME: ${{inputs.app_name }}-prod
   TESTING_PIPELINE_EXECUTION_ROLE: arn:aws:iam::${{inputs.aws_account_id}}:role/${{inputs.pipeline_execution_role}}
   TESTING_CLOUDFORMATION_EXECUTION_ROLE: arn:aws:iam::${{inputs.aws_account_id}}:role/aws-sam-cli-managed-dev-p-CloudFormationExecutionR-B3VPYQ0FH62F
   APP_DIRECTORY: ${{inputs.project_root_dir}}/${{inputs.app_name}}
@@ -205,16 +206,16 @@ jobs:
       - name: Assume the testing pipeline user role
         uses: aws-actions/configure-aws-credentials@master
         with:
-          aws-region: ${{ env.TESTING_REGION }}
-          role-to-assume: ${{ env.TESTING_PIPELINE_EXECUTION_ROLE }}
+          aws-region: ${{ inputs.aws_region }}
+          role-to-assume: arn:aws:iam::${{inputs.aws_account_id}}:role/${{inputs.pipeline_execution_role}}
           role-session-name: testing-deployment
           role-duration-seconds: 3600
           role-skip-session-tagging: true
 
       - name: Deploy to testing account
         run: |
-          sam deploy --stack-name ${PROD_STACK_NAME} \
-            --template packaged-prod.yaml \
+          sam deploy --stack-name $(echo ${{env.TESTING_STACK_NAME}}) \
+            --template packaged-testing.yaml \
             --capabilities CAPABILITY_IAM \
             --region $(echo ${{env.AWS_REGION}}) \
             --s3-bucket $(echo ${{env.TESTING_ARTIFACTS_BUCKET}}) \
@@ -260,7 +261,7 @@ jobs:
 
       - name: Deploy to production account
         run: |
-          sam deploy --stack-name ${PROD_STACK_NAME} \
+          sam deploy --stack-name $(echo ${{env.PROD_STACK_NAME}}) \
             --template packaged-prod.yaml \
             --capabilities CAPABILITY_IAM \
             --region $(echo ${{env.AWS_REGION}}) \
@@ -297,7 +298,7 @@ jobs:
 
       - name: Deploy to production account
         run: |
-          sam deploy --stack-name ${PROD_STACK_NAME} \
+          sam deploy --stack-name $(echo ${{env.PROD_STACK_NAME}}) \
             --template packaged-prod.yaml \
             --capabilities CAPABILITY_IAM \
             --region $(echo ${{env.AWS_REGION}}) \
