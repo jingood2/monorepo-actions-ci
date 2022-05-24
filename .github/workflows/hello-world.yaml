@@ -86,16 +86,10 @@ jobs:
   build-and-deploy-feature:
     # this stage is triggered only for feature branches (feature*),
     # which will build the stack and deploy to a stack named with branch name.
-    if: startsWith(github.ref, 'refs/heads/feat')
-    needs: [test]
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-    steps:
-      - name : reusable test 
-        uses: jingood2/monorepo-actions-ci/.github/workflows/reusable-lambda-cicd.yml@feat-test
-        with:
-          aws_account_id: 037729278610
-          app_name: hello-world
+    #if: startsWith(github.ref, 'refs/heads/feat')
+    #needs: [test]
+    uses: .github/workflows/reusable-lambda-cicd.yml
+    with:
+      aws_account_id: 037729278610
+      app_name: hello-world
 
