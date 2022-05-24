@@ -1,0 +1,38 @@
+# read the workflow template
+WORKFLOW_TEMPLATE=$(cat .github/workflow-template.yaml)
+SAM_WORKFLOW_TEMPLATE=$(cat .github/sam-cicd-template.yaml)
+MULTI_ACCOUNT_WORKFLOW_TEMPLATE=$(cat .github/multi-account-reusable-cd-template.yml)
+CD_WORKFLOW_TEMPLATE=$(cat .github/multi-account-cd-template.yml)
+
+BUILD_ACCOUNT='037729278610'
+TARGET_DEPLOY_ACCOUNTS=('037729278610' '123429278610')
+
+
+
+for ROUTE in $(ls projects); do
+    echo "generating workflow for projects/${ROUTE}"
+
+    # ACCOUNT 수만큼 reusable template에 deploy-prod 추가
+    for ACCOUNT in ${TARGET_DEPLOY_ACCOUNTS[@]}; do
+        CD_WORKFLOW=$(echo "${CD_WORKFLOW_TEMPLATE}" | sed "s/{{ACCOUNT}}/${ACCOUNT}/g")
+        echo "${CD_WORKFLOW}" >> .github/multi-account-reusable-cd-template.yml
+    done
+
+    # replace template route placeholder with route name
+    #WORKFLOW=$(echo "${SAM_WORKFLOW_TEMPLATE}" | sed "s/{{ROUTE}}/${ROUTE}/g")
+    WORKFLOW=$(echo "${MULTI_ACCOUNT_WORKFLOW_TEMPLATE}" | sed "s/{{ROUTE}}/${ROUTE}/g")
+
+    # save workflow to .github/workflows/{ROUTE}
+    echo "${WORKFLOW}" > .github/workflows/${ROUTE}.yaml
+done
+
+#iterate each route in routes directory
+#for ROUTE in $(ls projects); do
+#    echo "generating workflow for projects/${ROUTE}"
+#
+#    # replace template route placeholder with route name
+#    WORKFLOW=$(echo "${MULTI_ACCOUNT_WORKFLOW_TEMPLATE}" | sed "s/{{ROUTE}}/${ROUTE}/g")
+#
+#    # save workflow to .github/workflows/{ROUTE}
+#    echo "${WORKFLOW}" > .github/workflows/${ROUTE}.yaml
+#done
