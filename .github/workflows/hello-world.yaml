@@ -15,7 +15,7 @@ on:
 jobs:
   hello-world:
     # reusable workflows MUST be in .github/workflows
-    uses: .github/workflows/reusable-lambda-ci.yml
+    uses: ./reusable-lambda-ci.yml
     permissions:
       id-token: write
       contents: read
