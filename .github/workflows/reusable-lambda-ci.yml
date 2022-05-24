@@ -276,7 +276,8 @@ jobs:
             --s3-bucket ${PROD_ARTIFACTS_BUCKET} \
             --no-fail-on-empty-changeset \
             --role-arn ${PROD_CLOUDFORMATION_EXECUTION_ROLE}
-"deploy-037729278610":
+
+  deploy-037729278610:
     if: github.ref == 'refs/heads/main'
     needs: [integration-test]
     runs-on: ubuntu-latest
@@ -312,13 +313,8 @@ jobs:
             --s3-bucket $(echo ${{env.TESTING_ARTIFACTS_BUCKET}}) \
             --no-fail-on-empty-changeset \
             --role-arn $(echo ${{env.TESTING_CLOUDFORMATION_EXECUTION_ROLE}})
-
-
-
-
-
              
-"deploy-123429278610":
+  deploy-123429278610:
     if: github.ref == 'refs/heads/main'
     needs: [integration-test]
     runs-on: ubuntu-latest
