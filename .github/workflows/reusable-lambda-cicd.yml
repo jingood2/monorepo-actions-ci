@@ -32,7 +32,7 @@ env:
   TESTING_STACK_NAME: ${ inputs.app_name }-dev
   TESTING_PIPELINE_EXECUTION_ROLE: arn:aws:iam::${{inputs.aws_account_id}}:role/${{inputs.pipeline_execution_role}}
   TESTING_CLOUDFORMATION_EXECUTION_ROLE: arn:aws:iam::${{inputs.aws_account_id}}:role/aws-sam-cli-managed-dev-p-CloudFormationExecutionR-B3VPYQ0FH62F
-  APP_DIRECTORY: ${{inputs.project_root_dir}}/${{app_name}}
+  APP_DIRECTORY: ${{inputs.project_root_dir}}/${{inputs.app_name}}
   TESTING_ARTIFACTS_BUCKET: ${{inputs.artifact_bucket}}
   AWS_REGION: ${{inputs.aws_region}}
   # If there are functions with "Image" PackageType in your template,
