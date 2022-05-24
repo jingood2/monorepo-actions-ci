@@ -70,8 +70,8 @@ jobs:
       - name: Assume the testing pipeline user role
         uses: aws-actions/configure-aws-credentials@master
         with:
-          aws-region: $(echo ${{env.AWS_REGION}})
-          role-to-assume: $(echo ${{env.TESTING_PIPELINE_EXECUTION_ROLE}})
+          aws-region: ${{ inputs.aws_region }}
+          role-to-assume: arn:aws:iam::${{inputs.aws_account_id}}:role/${{inputs.pipeline_execution_role}}
           role-session-name: testing-packaging
           role-duration-seconds: 3600
           role-skip-session-tagging: true
