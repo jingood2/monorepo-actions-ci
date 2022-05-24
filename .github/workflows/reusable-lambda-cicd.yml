@@ -30,11 +30,11 @@ env:
   CI: "true"
   SAM_TEMPLATE: template.yaml
   TESTING_STACK_NAME: ${ inputs.app_name }-dev
-  TESTING_PIPELINE_EXECUTION_ROLE: arn:aws:iam::${inputs.aws_account_id}:role/${inputs.pipeline_execution_role}
+  TESTING_PIPELINE_EXECUTION_ROLE: arn:aws:iam::${{inputs.aws_account_id}}:role/${{inputs.pipeline_execution_role}}
   TESTING_CLOUDFORMATION_EXECUTION_ROLE: arn:aws:iam::${{inputs.aws_account_id}}:role/aws-sam-cli-managed-dev-p-CloudFormationExecutionR-B3VPYQ0FH62F
-  APP_DIRECTORY: ${inputs.project_root_dir}/${app_name}
-  TESTING_ARTIFACTS_BUCKET: ${inputs.artifact_bucket}
-  AWS_REGION: ${inputs.aws_region}
+  APP_DIRECTORY: ${{inputs.project_root_dir}}/${{app_name}}
+  TESTING_ARTIFACTS_BUCKET: ${{inputs.artifact_bucket}}
+  AWS_REGION: ${{inputs.aws_region}}
   # If there are functions with "Image" PackageType in your template,
   # uncomment the line below and add "--image-repository ${TESTING_IMAGE_REPOSITORY}" to
   # testing "sam package" and "sam deploy" commands.
@@ -70,18 +70,18 @@ jobs:
       - name: Assume the testing pipeline user role
         uses: aws-actions/configure-aws-credentials@master
         with:
-          aws-region: ${{env.AWS_REGION}}
-          role-to-assume: arn:aws:iam::${{inputs.aws_account_id}}:role/${{inputs.pipeline_execution_role}}
+          aws-region: $(echo ${{env.AWS_REGION}})
+          role-to-assume: $(echo ${{env.TESTING_PIPELINE_EXECUTION_ROLE}})
           role-session-name: testing-packaging
           role-duration-seconds: 3600
           role-skip-session-tagging: true
 
       - name: Delete feature branch stack
         run: |
-          cd ${{env.APP_DIRECTORY}}
+          cd $(echo ${{env.APP_DIRECTORY}})
           sam delete \
             --stack-name $(echo ${GITHUB_REF##*/} | tr -cd '[a-zA-Z0-9-]') \
-            --region ${{env.AWS_REGION}} \
+            --region $(echo ${{env.AWS_REGION}}) \
             --no-prompts
 
   build-and-deploy-feature:
@@ -98,13 +98,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
-      - name: Set the working directory
-        run: |-
-          WORKING_DIR="${{inputs.app_name}}"
-          echo "WORKING_DIR=projects/${WORKING_DIR}" >> $GITHUB_ENV
+      #- name: Set the working directory
+        #run: |-
+        #  WORKING_DIR="${{inputs.app_name}}"
+        #  echo "WORKING_DIR=projects/${WORKING_DIR}" >> $GITHUB_ENV
       - uses: aws-actions/setup-sam@v1
       - run: |-
-          cd ${WORKING_DIR}
+          cd $(echo ${{env.APP_DIRECTORY}})
           sam build --template ${SAM_TEMPLATE} --use-container
 
       - name: Assume the testing pipeline user role
@@ -122,8 +122,8 @@ jobs:
           cd ${WORKING_DIR}
           sam deploy --stack-name $(echo ${GITHUB_REF##*/} | tr -cd '[a-zA-Z0-9-]') \
             --capabilities CAPABILITY_IAM \
-            --region $(echo ${{inputs.aws_region}}) \
-            --s3-bucket $(echo ${{inputs.artifact_bucket}}) \
+            --region $(echo ${{env.AWS_REGION}}) \
+            --s3-bucket $(echo ${{env.TESTING_ARTIFACTS_BUCKET}}) \
             --no-fail-on-empty-changeset \
             --role-arn $(echo ${{env.TESTING_CLOUDFORMATION_EXECUTION_ROLE}})
 
