@@ -7,14 +7,14 @@ on:
       - 'feat**'
     paths:
       - "projects/{{ROUTE}}/**"
-      - "./github/workflows/{{ACCOUNT}}/{{ROUTE}}.yaml"
+      - "./github/workflows/{{ROUTE}}.yaml"
   delete:
     branches:
       - 'feat**'
 
 jobs:
-  {{ACCOUNT}}-{{ROUTE}}:
-    uses: ./.github/workflows/reusable-lambda-cicd.yml
+  account_deploy:
+    uses: ./.github/reusable-lambda-cicd.yml
     permissions:
       id-token: write
       contents: read
