@@ -98,10 +98,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
-      - name: Set the working directory
-        run: |-
-          WORKING_DIR="${{inputs.app_name}}"
-          echo "WORKING_DIR=projects/${WORKING_DIR}" >> $GITHUB_ENV
       - uses: aws-actions/setup-sam@v1
       - run: |-
           cd $(echo ${{env.APP_DIRECTORY}})
@@ -144,24 +140,24 @@ jobs:
 
       - name: Build resources
         run: |-
-          cd ${env.APP_DIRECTORY}
+          cd $(echo ${{env.APP_DIRECTORY}})
           sam build --template ${SAM_TEMPLATE} --use-container
 
       - name: Assume the testing pipeline user role
         uses: aws-actions/configure-aws-credentials@master
         with:
-          aws-region: ${{ env.TESTING_REGION }}
-          role-to-assume: ${{ env.TESTING_PIPELINE_EXECUTION_ROLE }}
+          aws-region: ${{ inputs.aws_region }}
+          role-to-assume: arn:aws:iam::${{inputs.aws_account_id}}:role/${{inputs.pipeline_execution_role}}
           role-session-name: testing-packaging
           role-duration-seconds: 3600
           role-skip-session-tagging: true
 
       - name: Upload artifacts to testing artifact buckets
         run: |
-          cd ${env.APP_DIRECTORY}
+          cd $(echo ${{env.APP_DIRECTORY}})
           sam package \
-            --s3-bucket ${TESTING_ARTIFACTS_BUCKET} \
-            --region ${TESTING_REGION} \
+            --s3-bucket $(echo ${{env.TESTING_ARTIFACTS_BUCKET}}) \
+            --region $(echo ${{env.AWS_REGION}}) \
             --output-template-file packaged-testing.yaml
 
       - uses: actions/upload-artifact@v2
@@ -172,20 +168,18 @@ jobs:
       - name: Assume the prod pipeline user role
         uses: aws-actions/configure-aws-credentials@master
         with:
-          aws-access-key-id: ${{ env.PIPELINE_USER_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ env.PIPELINE_USER_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.PROD_REGION }}
-          role-to-assume: ${{ env.PROD_PIPELINE_EXECUTION_ROLE }}
+          aws-region: ${{ inputs.aws_region }}
+          role-to-assume: arn:aws:iam::${{inputs.aws_account_id}}:role/${{inputs.pipeline_execution_role}}
           role-session-name: prod-packaging
           role-duration-seconds: 3600
           role-skip-session-tagging: true
 
       - name: Upload artifacts to production artifact buckets
         run: |
-          cd projects/{{ROUTE}}
+          cd $(echo ${{env.APP_DIRECTORY}})
           sam package \
-            --s3-bucket ${PROD_ARTIFACTS_BUCKET} \
-            --region ${PROD_REGION} \
+            --s3-bucket $(echo ${{env.TESTING_ARTIFACTS_BUCKET}}) \
+            --region $(echo ${{env.AWS_REGION}}) \
             --output-template-file packaged-prod.yaml
 
       - uses: actions/upload-artifact@v2
@@ -211,8 +205,6 @@ jobs:
       - name: Assume the testing pipeline user role
         uses: aws-actions/configure-aws-credentials@master
         with:
-          aws-access-key-id: ${{ env.PIPELINE_USER_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ env.PIPELINE_USER_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.TESTING_REGION }}
           role-to-assume: ${{ env.TESTING_PIPELINE_EXECUTION_ROLE }}
           role-session-name: testing-deployment
@@ -221,13 +213,13 @@ jobs:
 
       - name: Deploy to testing account
         run: |
-          sam deploy --stack-name ${TESTING_STACK_NAME} \
-            --template packaged-testing.yaml \
+          sam deploy --stack-name ${PROD_STACK_NAME} \
+            --template packaged-prod.yaml \
             --capabilities CAPABILITY_IAM \
-            --region ${TESTING_REGION} \
-            --s3-bucket ${TESTING_ARTIFACTS_BUCKET} \
+            --region $(echo ${{env.AWS_REGION}}) \
+            --s3-bucket $(echo ${{env.TESTING_ARTIFACTS_BUCKET}}) \
             --no-fail-on-empty-changeset \
-            --role-arn ${TESTING_CLOUDFORMATION_EXECUTION_ROLE}
+            --role-arn $(echo ${{env.TESTING_CLOUDFORMATION_EXECUTION_ROLE}})
 
   integration-test:
     if: github.ref == 'refs/heads/main'
