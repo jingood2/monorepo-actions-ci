@@ -163,7 +163,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: packaged-testing.yaml
-          path: projects/{{ROUTE}}/packaged-testing.yaml
+          path: projects/${{inputs.app_name}}/packaged-testing.yaml
 
       - name: Assume the prod pipeline user role
         uses: aws-actions/configure-aws-credentials@master
@@ -185,7 +185,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: packaged-prod.yaml
-          path: projects/{{ROUTE}}/packaged-prod.yaml
+          path: projects/${{inputs.app_name}}/packaged-prod.yaml
 
   deploy-testing:
     if: github.ref == 'refs/heads/main'
