@@ -25,7 +25,7 @@ jobs:
       app_name: "{{ROUTE}}"
 
 
-  "deploy_{{ACCOUNT}}":
+  deploy_{{ACCOUNT}}:
     # reusable workflows MUST be in .github/workflows
     uses: .github/workflows/reusable-cd.yml
     permissions:

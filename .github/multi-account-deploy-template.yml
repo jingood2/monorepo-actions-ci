@@ -13,9 +13,9 @@ on:
       - 'feat**'
 
 jobs:
-  "{{ROUTE}}":
+  build_and_deploy:
     # reusable workflows MUST be in .github/workflows
-    uses: .github/workflows/reusable-lambda-cicd.yml
+    uses: .github/workflows/reusable-lambda-ci.yml
     permissions:
       id-token: write
       contents: read
