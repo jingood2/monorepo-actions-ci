@@ -1,6 +1,6 @@
   {{ROUTE}}-{{ACCOUNT}}:
     # reusable workflows MUST be in .github/workflows
-    uses: ./.github/workflows/reusable-lambda-cicd.yml
+    uses: ./.github/workflows/reusable-lambda-cicd-v3.yml
     permissions:
       id-token: write
       contents: read
