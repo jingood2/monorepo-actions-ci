@@ -17,7 +17,7 @@ on:
         type: string
         required: false
         default: projects
-      pipeline_exexcution_role:
+      pipeline_execution_role:
         type: string
         required: false
         default: github-monorepo-actions-ci-role
@@ -118,14 +118,12 @@ jobs:
 
       - name: Deploy to feature stack in the testing account
         shell: bash
-        env:
-          AWS_REGION: ${{inputs.aws_region}}
         run: |-
           echo running on brach ${GITHUB_REF##*/}
           cd ${WORKING_DIR}
           sam deploy --stack-name $(echo ${GITHUB_REF##*/} | tr -cd '[a-zA-Z0-9-]') \
             --capabilities CAPABILITY_IAM \
-            --region ${AWS_REGION} \
+            --region $(echo ${{inputs.aws_region}}) \
             --s3-bucket ${env.TESTING_ARTIFACTS_BUCKET} \
             --no-fail-on-empty-changeset \
             --role-arn ${env.TESTING_CLOUDFORMATION_EXECUTION_ROLE}
