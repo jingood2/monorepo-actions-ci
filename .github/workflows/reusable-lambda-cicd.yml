@@ -20,7 +20,7 @@ on:
       pipeline_exexcution_role:
         type: string
         required: false
-        default: github-deploy-role
+        default: github-monorepo-actions-ci-role
       artifact_bucket:
         type: string
         required: false
@@ -118,12 +118,14 @@ jobs:
 
       - name: Deploy to feature stack in the testing account
         shell: bash
+        env:
+          AWS_REGION: ${{inputs.aws_region}}
         run: |-
           echo running on brach ${GITHUB_REF##*/}
-          cd ${{env.APP_DIRECTORY}}
+          cd ${WORKING_DIR}
           sam deploy --stack-name $(echo ${GITHUB_REF##*/} | tr -cd '[a-zA-Z0-9-]') \
             --capabilities CAPABILITY_IAM \
-            --region ${env.AWS_REGION} \
+            --region ${AWS_REGION} \
             --s3-bucket ${env.TESTING_ARTIFACTS_BUCKET} \
             --no-fail-on-empty-changeset \
             --role-arn ${env.TESTING_CLOUDFORMATION_EXECUTION_ROLE}
