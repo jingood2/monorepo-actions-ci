@@ -35,5 +35,3 @@
             --s3-bucket $(echo ${{env.TESTING_ARTIFACTS_BUCKET}}) \
             --no-fail-on-empty-changeset \
             --role-arn $(echo ${{env.TESTING_CLOUDFORMATION_EXECUTION_ROLE}})
-
-             
