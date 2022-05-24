@@ -102,9 +102,9 @@ jobs:
         run: |
           if [ -z "${{inputs.app_name}}" ]
           then
-            echo "final_tag=latest" >> $GITHUB_ENV
+            echo "working_dir=projects/hello-world" >> $GITHUB_ENV
           else
-            echo "working_dir=${{inputs.app_name}}" >> $GITHUB_ENV
+            echo "working_dir=projects/${{inputs.app_name}}" >> $GITHUB_ENV
           fi
       - uses: aws-actions/setup-sam@v1
       - run: |-
