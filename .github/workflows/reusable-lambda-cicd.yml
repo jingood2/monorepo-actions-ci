@@ -1,40 +1,44 @@
-name: "{{ROUTE}}"
+name: Reusable Lambda CICD Pipeline
 
 on:
-  push:
-    branches:
-      - 'main'
-      - 'feat**'
-    paths:
-      - "projects/{{ROUTE}}/**"
-      - "./github/workflows/{{ROUTE}}.yaml"
-  delete:
-    branches:
-      - 'feat**'
+  workflow_call:
+    inputs:
+      aws_account_id:
+        required: true
+        type: string
+      aws_region:
+        type: string
+        required: false
+        default: ap-northeast-2
+      app_name:
+        type: string
+        required: true
+      project_root_dir:
+        type: string
+        required: false
+        default: projects
+      pipeline_exexcution_role:
+        type: string
+        required: false
+        default: github-deploy-role
+      artifact_bucket:
+        type: string
+        required: false
+        default: jingood2-s3-dev-content
 
 env:
   CI: "true"
-  PIPELINE_USER_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  PIPELINE_USER_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   SAM_TEMPLATE: template.yaml
-  TESTING_STACK_NAME: "{{ROUTE}}-dev"
-  TESTING_PIPELINE_EXECUTION_ROLE: arn:aws:iam::037729278610:role/github-monorepo-actions-ci-role
-  TESTING_CLOUDFORMATION_EXECUTION_ROLE: arn:aws:iam::037729278610:role/aws-sam-cli-managed-dev-p-CloudFormationExecutionR-B3VPYQ0FH62F
-  TESTING_ARTIFACTS_BUCKET: jingood2-s3-dev-content
-  TESTING_REGION: ap-northeast-2
+  TESTING_STACK_NAME: ${ inputs.app_name }-dev
+  TESTING_PIPELINE_EXECUTION_ROLE: arn:aws:iam::${inputs.aws_account_id}:role/${inputs.pipeline_execution_role}
+  TESTING_CLOUDFORMATION_EXECUTION_ROLE: arn:aws:iam::${inputs.aws_account_id}:role/aws-sam-cli-managed-dev-p-CloudFormationExecutionR-B3VPYQ0FH62F
+  APP_DIRECTORY: ${inputs.project_root_dir}/${app_name}
+  TESTING_ARTIFACTS_BUCKET: ${inputs.artifact_bucket}
+  AWS_REGION: ${inputs.aws_region}
   # If there are functions with "Image" PackageType in your template,
   # uncomment the line below and add "--image-repository ${TESTING_IMAGE_REPOSITORY}" to
   # testing "sam package" and "sam deploy" commands.
   # TESTING_IMAGE_REPOSITORY = '0123456789.dkr.ecr.region.amazonaws.com/repository-name'
-  PROD_STACK_NAME: "{{ROUTE}}-prod"
-  PROD_PIPELINE_EXECUTION_ROLE: arn:aws:iam::037729278610:role/github-monorepo-actions-ci-role
-  PROD_CLOUDFORMATION_EXECUTION_ROLE: arn:aws:iam::037729278610:role/aws-sam-cli-managed-dev-p-CloudFormationExecutionR-B3VPYQ0FH62F
-  PROD_ARTIFACTS_BUCKET: jingood2-s3-dev-content
-  # If there are functions with "Image" PackageType in your template,
-  # uncomment the line below and add "--image-repository ${PROD_IMAGE_REPOSITORY}" to
-  # prod "sam package" and "sam deploy" commands.
-  # PROD_IMAGE_REPOSITORY = '0123456789.dkr.ecr.region.amazonaws.com/repository-name'
-  PROD_REGION: ap-northeast-2
 
 jobs:
   test:
@@ -57,7 +61,6 @@ jobs:
       #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   delete-feature:
-    if: startsWith(github.event.ref, 'feat') && github.event_name == 'delete'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -67,20 +70,18 @@ jobs:
       - name: Assume the testing pipeline user role
         uses: aws-actions/configure-aws-credentials@master
         with:
-          aws-region: ${{ env.TESTING_REGION }}
-          role-to-assume: ${{ env.TESTING_PIPELINE_EXECUTION_ROLE }}
+          aws-region: ${{env.AWS_REGION}}
+          role-to-assume: arn:aws:iam::${{inputs.aws_account_id}}:role/${{inputs.pipeline_execution_role}}
           role-session-name: testing-packaging
           role-duration-seconds: 3600
           role-skip-session-tagging: true
 
       - name: Delete feature branch stack
-        env:
-          FEATURE_BRANCH_NAME: ${{ github.event.ref }}
         run: |
-          cd projects/{{ROUTE}}
+          cd ${{env.APP_DIRECTORY}}
           sam delete \
-            --stack-name $(echo ${FEATURE_BRANCH_NAME##*/} | tr -cd '[a-zA-Z0-9-]') \
-            --region ${TESTING_REGION} \
+            --stack-name $(echo ${GITHUB_REF##*/} | tr -cd '[a-zA-Z0-9-]') \
+            --region ${{env.AWS_REGION}} \
             --no-prompts
 
   build-and-deploy-feature:
@@ -103,8 +104,8 @@ jobs:
       - name: Assume the testing pipeline user role
         uses: aws-actions/configure-aws-credentials@master
         with:
-          aws-region: ${{ env.TESTING_REGION }}
-          role-to-assume: ${{ env.TESTING_PIPELINE_EXECUTION_ROLE }}
+          aws-region: ${{ inputs.aws_region }}
+          role-to-assume: arn:aws:iam::${{inputs.aws_account_id}}:role/${{inputs.pipeline_execution_role}}
           role-session-name: feature-deployment
           role-duration-seconds: 3600
           role-skip-session-tagging: true
