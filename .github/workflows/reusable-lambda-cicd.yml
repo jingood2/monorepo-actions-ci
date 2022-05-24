@@ -98,7 +98,7 @@ jobs:
       - uses: actions/setup-python@v2
       - uses: aws-actions/setup-sam@v1
       - run: |-
-          cd projects/{{ROUTE}}
+          cd ${{env.APP_DIRECTORY}}
           sam build --template ${SAM_TEMPLATE} --use-container
 
       - name: Assume the testing pipeline user role
@@ -114,13 +114,13 @@ jobs:
         shell: bash
         run: |-
           echo running on brach ${GITHUB_REF##*/}
-          cd projects/{{ROUTE}}
+          cd ${{env.APP_DIRECTORY}}
           sam deploy --stack-name $(echo ${GITHUB_REF##*/} | tr -cd '[a-zA-Z0-9-]') \
             --capabilities CAPABILITY_IAM \
-            --region ${TESTING_REGION} \
-            --s3-bucket ${TESTING_ARTIFACTS_BUCKET} \
+            --region ${env.AWS_REGION} \
+            --s3-bucket ${env.TESTING_ARTIFACTS_BUCKET} \
             --no-fail-on-empty-changeset \
-            --role-arn ${TESTING_CLOUDFORMATION_EXECUTION_ROLE}
+            --role-arn ${env.TESTING_CLOUDFORMATION_EXECUTION_ROLE}
 
   build-and-package:
     if: github.ref == 'refs/heads/main'
@@ -139,14 +139,12 @@ jobs:
 
       - name: Build resources
         run: |-
-          cd projects/{{ROUTE}}
+          cd ${env.APP_DIRECTORY}
           sam build --template ${SAM_TEMPLATE} --use-container
 
       - name: Assume the testing pipeline user role
         uses: aws-actions/configure-aws-credentials@master
         with:
-          aws-access-key-id: ${{ env.PIPELINE_USER_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ env.PIPELINE_USER_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.TESTING_REGION }}
           role-to-assume: ${{ env.TESTING_PIPELINE_EXECUTION_ROLE }}
           role-session-name: testing-packaging
@@ -155,7 +153,7 @@ jobs:
 
       - name: Upload artifacts to testing artifact buckets
         run: |
-          cd projects/{{ROUTE}}
+          cd ${env.APP_DIRECTORY}
           sam package \
             --s3-bucket ${TESTING_ARTIFACTS_BUCKET} \
             --region ${TESTING_REGION} \
