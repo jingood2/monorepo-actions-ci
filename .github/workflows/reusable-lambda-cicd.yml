@@ -114,7 +114,6 @@ jobs:
           role-to-assume: arn:aws:iam::${{inputs.aws_account_id}}:role/${{inputs.pipeline_execution_role}}
           role-session-name: feature-deployment
           role-duration-seconds: 3600
-          role-skip-session-tagging: true
 
       - name: Deploy to feature stack in the testing account
         shell: bash
