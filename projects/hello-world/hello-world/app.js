@@ -20,7 +20,7 @@ exports.lambdaHandler = async (event, context) => {
         response = {
             statusCode: 200,
             body: JSON.stringify({
-                message: 'hello world v39' 
+                message: 'hello world v1' 
                 // location: ret.data.trim()
             })
         }

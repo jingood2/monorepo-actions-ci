@@ -1,11 +1,11 @@
 # read the workflow template
 WORKFLOW_TEMPLATE=$(cat .github/workflow-template.yaml)
 SAM_WORKFLOW_TEMPLATE=$(cat .github/sam-cicd-template.yaml)
-MULTI_ACCOUNT_WORKFLOW_TEMPLATE=$(cat .github/multi-account-deploy-template.yml)
+MULTI_ACCOUNT_WORKFLOW_TEMPLATE=$(cat .github/multi-account-reusable-cd-template.yml)
 
 TARGET_DEPLOY_ACCOUNTS=('037729278610' '123429278610')
 
-for ACCOUNT in ${TARGET_DEPLOY_ACCOUNTS[@]}; do
+for ACCOUNT in ${TARGET_DEPLOY_ACCOUNTS[@]}; 
     for ROUTE in $(ls projects); do
         echo "generating workflow for projects/${ROUTE}"
 
