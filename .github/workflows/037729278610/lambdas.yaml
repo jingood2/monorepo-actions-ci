@@ -1,4 +1,4 @@
-name: "{{ROUTE}}"
+name: "lambdas"
 
 on:
   push:
@@ -6,14 +6,14 @@ on:
       - 'main'
       - 'feat**'
     paths:
-      - "projects/{{ROUTE}}/**"
-      - "./github/workflows/{{ROUTE}}.yaml"
+      - "projects/lambdas/**"
+      - "./github/workflows/lambdas.yaml"
   delete:
     branches:
       - 'feat**'
 
 jobs:
-  "{{ACCOUNT}}-{{ROUTE}}":
+  "037729278610-lambdas":
     # reusable workflows MUST be in .github/workflows
     uses: .github/workflows/reusable-lambda-cicd.yml
     permissions:
@@ -21,6 +21,5 @@ jobs:
       contents: read
     with:
       # 0으로 시작하는 AccountID 때문에 문자열로 명시
-      aws_account_id: "{{ACCOUNT}}"
-      app_name: "{{ROUTE}}"
-
+      aws_account_id: "037729278610"
+      app_name: "lambdas"
