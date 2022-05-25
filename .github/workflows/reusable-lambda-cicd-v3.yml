@@ -10,6 +10,10 @@ on:
         type: string
         required: false
         default: ap-northeast-2
+      stage:
+        type: string
+        required: false
+        default: prod
       app_name:
         type: string
         required: true
@@ -43,7 +47,7 @@ env:
 
 jobs:
   test:
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' && ${{ inputs.stage != 'prod' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -126,7 +130,7 @@ jobs:
 
   build-and-package:
     if: github.ref == 'refs/heads/main'
-    needs: [test]
+    #needs: [test]
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -189,7 +193,7 @@ jobs:
           path: projects/${{inputs.app_name}}/packaged-prod.yaml
 
   deploy-testing:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && ${{ inputs.stage != 'prod' }}
     needs: [build-and-package]
     permissions:
       id-token: write
@@ -232,7 +236,7 @@ jobs:
           # trigger the integration tests here
 
   deploy-prod:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && ${{inputs.stage == 'prod'}}
     needs: [integration-test]
     runs-on: ubuntu-latest
     permissions:

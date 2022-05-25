@@ -12,7 +12,15 @@ TARGET_DEPLOY_ACCOUNTS=('037729278610' '123429278610')
 
 # ACCOUNT 수만큼 reusable template에 deploy-prod 추가
 for ACCOUNT in ${TARGET_DEPLOY_ACCOUNTS[@]}; do
-    CD_WORKFLOW=$(echo "${CD_WORKFLOW_TEMP}" | sed "s/{{ACCOUNT}}/${ACCOUNT}/g")
+
+    if [ ${ACCOUNT} == ${BUILD_ACCOUNT} ];
+    then
+        CD_WORKFLOW=$(echo "${CD_WORKFLOW_TEMP}" | sed "s/{{STAGE}}/dev/g")
+    else
+        CD_WORKFLOW=$(echo "${CD_WORKFLOW_TEMP}" | sed "s/{{STAGE}}/prod/g")
+    fi
+
+    CD_WORKFLOW=$(echo "${CD_WORKFLOW}" | sed "s/{{ACCOUNT}}/${ACCOUNT}/g")
     echo "${CD_WORKFLOW}" >> /tmp/multi-account-reusable-cd.yml
 done
 
